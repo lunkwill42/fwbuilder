@@ -1,0 +1,22 @@
+#!/bin/sh -xe
+echo "---------------------------------------------------------------------------"
+echo "Building fwbuilder as $(id)"
+echo "---------------------------------------------------------------------------"
+BUILD_NUMBER="$1"
+[ -n "$BUILD_NUMBER" ] && BUILD_NUMBER="-$BUILD_NUMBER"
+
+cd /build/source
+
+export DEBEMAIL="drift@uninett.no"
+export DEBFULLNAME="Paranoid Android"
+
+git describe --exact-match || export GIT_VERSION=`git describe --tags --always`
+if [ -n "${GIT_VERSION}" ]; then
+    export PACKAGE_VERSION=${GIT_VERSION#v}${BUILD_NUMBER}
+    dch -v $PACKAGE_VERSION "Automated build"
+fi
+NO_GIT_DIRTY=1 dpkg-buildpackage -b -uc -us -j8
+
+debclean || true
+cd /build
+cp -v *.deb *.changes /output

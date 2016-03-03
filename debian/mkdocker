@@ -1,0 +1,43 @@
+#!/bin/sh -xe
+
+# Builds debian packages inside Docker
+# usage: mkdocker [[<debian release codename>] [<output directory>]]
+
+MYLOC="$(realpath $0)"
+DEBIANDIR="$(dirname $MYLOC)"
+SOURCEDIR="$(dirname $DEBIANDIR)"
+DOCKERFILE="$DEBIANDIR/Dockerfile"
+IMAGETAG="fwbuilderbuilder:$(pwgen -N1 -A 12)"
+USERID=$(id -u)
+
+RELEASE="$1"
+OUTPUT="$2"
+
+[ -z "$RELEASE" ] && RELEASE="wheezy"
+[ -z "$OUTPUT" ] && OUTPUT="$(realpath $DEBIANDIR/../..)"
+
+# Build a Docker image containing all the necessary Debian dependencies to
+# build fwbuilder
+cat > "$DOCKERFILE" <<EOF
+FROM debian:$RELEASE
+
+RUN apt-get update \
+    && apt-get install -y \
+    git \
+    pbuilder \
+    autoconf \
+    automake
+
+RUN     mkdir -p /build/source/debian
+ADD     control /build/source/debian/
+WORKDIR /build/source
+RUN     mk-build-deps --install --remove --tool 'apt-get --no-install-recommends -y'
+
+VOLUME ["/build/source", "/output"]
+RUN chown -R $USERID /build
+USER $USERID
+ENTRYPOINT ["/build/source/debian/build.docker"]
+EOF
+
+docker build -t "$IMAGETAG" "$DEBIANDIR"
+docker run -t --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" "$IMAGETAG" "$BUILD_NUMBER"
