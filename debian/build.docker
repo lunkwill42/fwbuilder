@@ -14,6 +14,7 @@ git describe --exact-match || export GIT_VERSION=`git describe --tags --always`
 if [ -n "${GIT_VERSION}" ]; then
     export PACKAGE_VERSION=${GIT_VERSION#v}${BUILD_NUMBER}
     dch -v $PACKAGE_VERSION "Automated build"
+    dch --release ""
 fi
 NO_GIT_DIRTY=1 dpkg-buildpackage -b -uc -us -j8
 
