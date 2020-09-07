@@ -20,4 +20,4 @@ NO_GIT_DIRTY=1 dpkg-buildpackage -b -uc -us -j8
 
 debclean || true
 cd /build
-cp -v *.deb *.changes /output
+cp -v *.deb *.changes *.build* *.tar.* *.dsc /output
