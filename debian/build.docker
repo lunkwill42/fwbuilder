@@ -7,7 +7,7 @@ BUILD_NUMBER="$1"
 
 cd /build/source
 
-export DEBEMAIL="drift@uninett.no"
+export DEBEMAIL="kontakt@uninett.no"
 export DEBFULLNAME="Paranoid Android"
 
 git describe --exact-match || export GIT_VERSION=`git describe --tags --always`
