@@ -40,4 +40,4 @@ ENTRYPOINT ["/build/source/debian/build.docker"]
 EOF
 
 docker build -t "$IMAGETAG" "$DEBIANDIR"
-docker run -t --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" "$IMAGETAG" "$BUILD_NUMBER"
+docker run -ti --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" "$IMAGETAG" "$BUILD_NUMBER"
