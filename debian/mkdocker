@@ -13,7 +13,7 @@ USERID=$(id -u)
 RELEASE="$1"
 OUTPUT="$2"
 
-[ -z "$RELEASE" ] && RELEASE="wheezy"
+[ -z "$RELEASE" ] && RELEASE="bullseye"
 [ -z "$OUTPUT" ] && OUTPUT="$(realpath $DEBIANDIR/../..)"
 
 # Build a Docker image containing all the necessary Debian dependencies to
