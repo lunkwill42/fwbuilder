@@ -24,6 +24,7 @@ FROM debian:$RELEASE
 RUN apt-get update \
     && apt-get install -y \
     git \
+    ccache \
     pbuilder \
     autoconf \
     automake
@@ -40,4 +41,4 @@ ENTRYPOINT ["/build/source/debian/build.docker"]
 EOF
 
 docker build -t "$IMAGETAG" "$DEBIANDIR"
-docker run -ti --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" "$IMAGETAG" "$BUILD_NUMBER"
+docker run -ti --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" -v "$HOME/.cache:/home/.cache" "$IMAGETAG" "$BUILD_NUMBER"
