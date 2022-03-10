@@ -37,8 +37,15 @@ RUN     mk-build-deps --install --remove --tool 'apt-get --no-install-recommends
 VOLUME ["/build/source", "/output"]
 RUN chown -R $USERID /build
 USER $USERID
-ENTRYPOINT ["/build/source/debian/build.docker"]
 EOF
 
 docker build -t "$IMAGETAG" "$DEBIANDIR"
-docker run -ti --rm -v "$SOURCEDIR:/build/source" -v "$OUTPUT:/output" -v "$HOME/.cache:/home/.cache" "$IMAGETAG" "$BUILD_NUMBER"
+docker run -ti --rm \
+       -v "$SOURCEDIR:/build/source" \
+       -v "$OUTPUT:/output" \
+       -v "$HOME/.cache:/home/.cache" \
+       --env "DEBEMAIL=$DEBEMAIL" \
+       --env "DEBFULLNAME=$DEBFULLNAME" \
+       --env "DEB_BUILD_OPTIONS='ccache nocheck'" \
+       "$IMAGETAG" "$BUILD_NUMBER" \
+       debuild -us -uc --lintian-opts --profile debian
