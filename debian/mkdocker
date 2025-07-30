@@ -47,5 +47,5 @@ docker run -ti --rm \
        --env "DEBEMAIL=$DEBEMAIL" \
        --env "DEBFULLNAME=$DEBFULLNAME" \
        --env "DEB_BUILD_OPTIONS='ccache nocheck'" \
-       "$IMAGETAG" "$BUILD_NUMBER" \
+       "$IMAGETAG" \
        debuild -us -uc --lintian-opts --profile debian
